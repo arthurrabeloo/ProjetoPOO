@@ -9,8 +9,13 @@ import java.util.List;
 import java.util.Scanner;
 
 public class InterfaceUsuario {
-    private final Scanner scanner = new Scanner(System.in);
-    private final Recomendador recomendador = new Recomendador();
+    private Scanner scanner = new Scanner(System.in);
+    private Recomendador recomendador = new Recomendador();
+
+    public InterfaceUsuario(Scanner scanner, Recomendador recomendador) {
+        this.scanner = scanner;
+        this.recomendador = recomendador;
+    }
 
     public void iniciar() {
         while (true) {
@@ -138,6 +143,6 @@ public class InterfaceUsuario {
             System.out.println("Avaliação registrada com sucesso!");
         } catch (NotaInvalidaException e) {
             System.err.println(e.getMessage());
- }
-}
+        }
+    }
 }
