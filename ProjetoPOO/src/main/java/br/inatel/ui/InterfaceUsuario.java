@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class InterfaceUsuario {
-    private Scanner scanner = new Scanner(System.in);
-    private Recomendador recomendador = new Recomendador();
+    private Scanner scanner;
+    private Recomendador recomendador;
 
     public InterfaceUsuario(Scanner scanner, Recomendador recomendador) {
         this.scanner = scanner;
@@ -67,6 +67,7 @@ public class InterfaceUsuario {
                 String diretor = scanner.nextLine();
                 System.out.print("Duração (minutos): ");
                 int duracao = scanner.nextInt();
+                scanner.nextLine(); // Consumir quebra de linha
                 yield new Filme(titulo, genero, ano, diretor, duracao);
             }
             case 2 -> {
@@ -74,6 +75,7 @@ public class InterfaceUsuario {
                 int temporadas = scanner.nextInt();
                 System.out.print("Episódios totais: ");
                 int episodios = scanner.nextInt();
+                scanner.nextLine(); // Consumir quebra de linha
                 yield new Serie(titulo, genero, ano, temporadas, episodios);
             }
             case 3 -> {
@@ -94,26 +96,26 @@ public class InterfaceUsuario {
         System.out.print("\nInforme o gênero: ");
         String genero = scanner.nextLine();
 
-        try {
-            List<Conteudo> recomendados = recomendador.recomendarPorGenero(genero);
+        List<Conteudo> recomendados = recomendador.recomendarPorGenero(genero);
+        if (recomendados.isEmpty()) {
+            System.out.println("Nenhum conteúdo encontrado para o gênero informado.");
+        } else {
             System.out.println("\n--- Conteúdo do gênero " + genero + " ---");
             for (Conteudo c : recomendados) {
-                System.out.println(c.getTitulo() + " (" + c.getNotaMedia() + ")");
+                System.out.println(c.getTitulo() + " (" + String.format("%.2f", c.getNotaMedia()) + ")");
             }
-        } catch (ConteudoNaoEncontradoException e) {
-            System.err.println(e.getMessage());
         }
     }
 
     private void recomendarTop5() {
-        try {
-            List<Conteudo> top5 = recomendador.recomendarTop();
+        List<Conteudo> top5 = recomendador.recomendarTop(5);
+        if (top5.isEmpty()) {
+            System.out.println("Nenhum conteúdo disponível para recomendação.");
+        } else {
             System.out.println("\n--- Top 5 Recomendações ---");
             for (Conteudo c : top5) {
-                System.out.println(c.getTitulo() + " (" + c.getNotaMedia() + ")");
+                System.out.println(c.getTitulo() + " (" + String.format("%.2f", c.getNotaMedia()) + ")");
             }
-        } catch (ConteudoNaoEncontradoException e) {
-            System.err.println(e.getMessage());
         }
     }
 

@@ -1,10 +1,9 @@
 package br.inatel.models;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Usuario implements Serializable {
+public class Usuario {
     private String nome;
     private String email;
     private List<Avaliacao> avaliacoes;

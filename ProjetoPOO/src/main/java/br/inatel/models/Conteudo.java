@@ -1,10 +1,9 @@
 package br.inatel.models;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Conteudo implements Serializable {
+public abstract class Conteudo {
     protected String titulo;
     protected String genero;
     protected int anoLancamento;
@@ -14,11 +13,11 @@ public abstract class Conteudo implements Serializable {
         this.titulo = titulo;
         this.genero = genero;
         this.anoLancamento = anoLancamento;
-        this.avaliacoes = new ArrayList<>();
+        this.avaliacoes = new ArrayList<>(); //boa prática, evita nullpointerexception e inicializa a lista quando um obj é criado
     }
 
     public void adicionarAvaliacao(Avaliacao avaliacao) {
-        avaliacoes.add(avaliacao);
+        avaliacoes.add(avaliacao); //adiciona avaliacao na lista
     }
 
     public double getNotaMedia() {

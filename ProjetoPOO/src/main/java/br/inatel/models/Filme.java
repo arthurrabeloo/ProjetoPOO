@@ -2,12 +2,12 @@ package br.inatel.models;
 
 public class Filme extends Conteudo {
     private String diretor;
-    private int duracaoMinutos;
+    private int duracao;
 
     public Filme(String titulo, String genero, int anoLancamento, String diretor, int duracaoMinutos) {
         super(titulo, genero, anoLancamento);
         this.diretor = diretor;
-        this.duracaoMinutos = duracaoMinutos;
+        this.duracao = duracaoMinutos;
     }
 
     @Override
@@ -17,6 +17,6 @@ public class Filme extends Conteudo {
 
     // Getters
     public String getDiretor() { return diretor; }
-    public int getDuracaoMinutos() { return duracaoMinutos; }
+    public int getDuracao() { return duracao; }
 }
 

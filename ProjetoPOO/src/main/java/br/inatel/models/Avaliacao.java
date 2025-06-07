@@ -1,9 +1,8 @@
 package br.inatel.models;
 
-import java.io.Serializable;
 import java.util.Date;
 
-public class Avaliacao implements Serializable {
+public class Avaliacao {
     private Usuario usuario;
     private int nota;
     private String comentario;
