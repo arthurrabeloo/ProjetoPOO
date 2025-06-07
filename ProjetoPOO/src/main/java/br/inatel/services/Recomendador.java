@@ -14,6 +14,11 @@ public class Recomendador {
         this.conteudos = new ArrayList<>();
     }
 
+    public boolean contemConteudo(String titulo) {
+        return conteudos.stream()
+                .anyMatch(c -> c.getTitulo().equalsIgnoreCase(titulo));
+    }
+
     public void adicionarConteudo(Conteudo conteudo) {
         conteudos.add(conteudo);
     }
@@ -41,7 +46,7 @@ public class Recomendador {
 
         for (Conteudo conteudo : conteudos) {
             String tipo = conteudo.getTipo();
-            String linha = switch (tipo) {
+            String linhaConteudo = switch (tipo) {
                 case "Filme" -> String.format("Filme;%s;%s;%d;%s;%d",
                         conteudo.getTitulo(),
                         conteudo.getGenero(),
@@ -62,13 +67,22 @@ public class Recomendador {
                         ((Livro) conteudo).getEditora());
                 default -> throw new IllegalArgumentException("Tipo desconhecido: " + tipo);
             };
-            linhas.add(linha);
+            linhas.add(linhaConteudo);
+
+            for (Avaliacao avaliacao : conteudo.getAvaliacoes()) {
+                String linhaAvaliacao = String.format("Avaliacao;%s;%d;%s",
+                        avaliacao.getUsuario().getEmail(),
+                        avaliacao.getNota(),
+                        avaliacao.getComentario());
+                linhas.add(linhaAvaliacao);
+            }
         }
 
         Path path = Paths.get(caminho);
         Files.createDirectories(path.getParent());
         Files.write(path, linhas);
     }
+
 
     public void carregarConteudosDeTexto(String caminho) throws IOException {
         Path path = Paths.get(caminho);
@@ -80,16 +94,43 @@ public class Recomendador {
         List<String> linhas = Files.readAllLines(path);
         conteudos.clear();
 
+        Conteudo conteudoAtual = null;
         for (String linha : linhas) {
             String[] partes = linha.split(";");
             String tipo = partes[0];
-            Conteudo conteudo = switch (tipo) {
-                case "Filme" -> new Filme(partes[1], partes[2], Integer.parseInt(partes[3]), partes[4], Integer.parseInt(partes[5]));
-                case "Serie" -> new Serie(partes[1], partes[2], Integer.parseInt(partes[3]), Integer.parseInt(partes[4]), Integer.parseInt(partes[5]));
-                case "Livro" -> new Livro(partes[1], partes[2], Integer.parseInt(partes[3]), partes[4], partes[5]);
+
+            switch (tipo) {
+                case "Filme" -> {
+                    conteudoAtual = new Filme(partes[1], partes[2], Integer.parseInt(partes[3]), partes[4], Integer.parseInt(partes[5]));
+                    conteudos.add(conteudoAtual);
+                }
+                case "Serie" -> {
+                    conteudoAtual = new Serie(partes[1], partes[2], Integer.parseInt(partes[3]), Integer.parseInt(partes[4]), Integer.parseInt(partes[5]));
+                    conteudos.add(conteudoAtual);
+                }
+                case "Livro" -> {
+                    conteudoAtual = new Livro(partes[1], partes[2], Integer.parseInt(partes[3]), partes[4], partes[5]);
+                    conteudos.add(conteudoAtual);
+                }
+                case "Avaliacao" -> {
+                    if (conteudoAtual != null) {
+                        Usuario usuario = new Usuario("Desconhecido", partes[1]);
+                        Avaliacao avaliacao = new Avaliacao(usuario, Integer.parseInt(partes[2]), partes[3]);
+                        conteudoAtual.adicionarAvaliacao(avaliacao);
+                    }
+                }
                 default -> throw new IllegalArgumentException("Tipo desconhecido no arquivo: " + tipo);
-            };
-            conteudos.add(conteudo);
+            }
         }
     }
+
+
+    public List<Conteudo> pesquisarPorTitulo(String titulo) {
+        return conteudos.stream()
+                .filter(c -> c.getTitulo().toLowerCase().contains(titulo.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+
+
 }

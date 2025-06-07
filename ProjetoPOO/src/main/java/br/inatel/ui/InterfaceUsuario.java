@@ -5,6 +5,7 @@ import br.inatel.services.Recomendador;
 import br.inatel.exceptions.ConteudoNaoEncontradoException;
 import br.inatel.exceptions.NotaInvalidaException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -24,7 +25,9 @@ public class InterfaceUsuario {
             System.out.println("2. Listar conteúdo por gênero");
             System.out.println("3. Recomendação top 5");
             System.out.println("4. Avaliar conteúdo");
-            System.out.println("5. Sair");
+            System.out.println("5. Pesquisar conteúdo");
+            System.out.println("6. Ver avaliações");
+            System.out.println("7. Sair");
             System.out.print("Escolha uma opção: ");
 
             int opcao = scanner.nextInt();
@@ -36,7 +39,9 @@ public class InterfaceUsuario {
                     case 2 -> listarPorGenero();
                     case 3 -> recomendarTop5();
                     case 4 -> avaliarConteudo();
-                    case 5 -> {
+                    case 5 -> pesquisarConteudo();
+                    case 6 -> verAvaliacoes();
+                    case 7 -> {
                         System.out.println("Encerrando o programa...");
                         return;
                     }
@@ -52,6 +57,12 @@ public class InterfaceUsuario {
         System.out.println("\n--- Adicionar Conteúdo ---");
         System.out.print("Título: ");
         String titulo = scanner.nextLine();
+
+        if (recomendador.contemConteudo(titulo)) {
+            System.out.println("O conteúdo com esse título já está adicionado.");
+            return;
+        }
+
         System.out.print("Gênero: ");
         String genero = scanner.nextLine();
         System.out.print("Ano de lançamento: ");
@@ -67,7 +78,6 @@ public class InterfaceUsuario {
                 String diretor = scanner.nextLine();
                 System.out.print("Duração (minutos): ");
                 int duracao = scanner.nextInt();
-                scanner.nextLine(); // Consumir quebra de linha
                 yield new Filme(titulo, genero, ano, diretor, duracao);
             }
             case 2 -> {
@@ -75,7 +85,6 @@ public class InterfaceUsuario {
                 int temporadas = scanner.nextInt();
                 System.out.print("Episódios totais: ");
                 int episodios = scanner.nextInt();
-                scanner.nextLine(); // Consumir quebra de linha
                 yield new Serie(titulo, genero, ano, temporadas, episodios);
             }
             case 3 -> {
@@ -91,6 +100,7 @@ public class InterfaceUsuario {
         recomendador.adicionarConteudo(conteudo);
         System.out.println("Conteúdo adicionado com sucesso!");
     }
+
 
     private void listarPorGenero() {
         System.out.print("\nInforme o gênero: ");
@@ -143,8 +153,59 @@ public class InterfaceUsuario {
         try {
             usuario.avaliar(conteudo, nota, comentario);
             System.out.println("Avaliação registrada com sucesso!");
+
+            // Salvar alterações no arquivo
+            recomendador.salvarConteudosComoTexto("dados/conteudos.txt");
         } catch (NotaInvalidaException e) {
             System.err.println(e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar os dados: " + e.getMessage());
         }
     }
+
+    private void pesquisarConteudo() {
+        System.out.print("\nInforme o título ou parte do título do conteúdo: ");
+        String titulo = scanner.nextLine();
+
+        List<Conteudo> resultados = recomendador.pesquisarPorTitulo(titulo);
+
+        if (resultados.isEmpty()) {
+            System.out.println("Nenhum conteúdo encontrado com o título fornecido.");
+        } else {
+            System.out.println("\n--- Resultados da Pesquisa ---");
+            for (Conteudo c : resultados) {
+                System.out.println(c.getTitulo() + " (" + c.getTipo() + ") - Nota Média: " + c.getNotaMedia());
+            }
+        }
+    }
+
+    private void verAvaliacoes() {
+        System.out.print("\nInforme o título do conteúdo: ");
+        String titulo = scanner.nextLine();
+
+        Conteudo conteudo = recomendador.getConteudos().stream()
+                .filter(c -> c.getTitulo().equalsIgnoreCase(titulo))
+                .findFirst()
+                .orElse(null);
+
+        if (conteudo == null) {
+            System.out.println("Erro: Conteúdo não encontrado.");
+            return;
+        }
+
+        List<Avaliacao> avaliacoes = conteudo.getAvaliacoes();
+
+        if (avaliacoes.isEmpty()) {
+            System.out.println("Esse conteúdo ainda não possui avaliações.");
+        } else {
+            System.out.println("\n--- Avaliações de " + conteudo.getTitulo() + " ---");
+            for (Avaliacao avaliacao : avaliacoes) {
+                System.out.println("Usuário: " + avaliacao.getUsuario().getNome());
+                System.out.println("Nota: " + avaliacao.getNota());
+                System.out.println("Comentário: " + avaliacao.getComentario());
+                System.out.println("---------------------------");
+            }
+        }
+    }
+
 }

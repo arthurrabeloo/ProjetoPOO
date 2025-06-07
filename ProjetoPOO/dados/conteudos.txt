@@ -1,0 +1,42 @@
+Filme;The Matrix;Ficção Científica;1999;Lana Wachowski e Lilly Wachowski;136
+Filme;Avatar;Aventura;2009;James Cameron;162
+Filme;Interstellar;Ficção Científica;2014;Christopher Nolan;169
+Filme;O Senhor dos Anéis: A Sociedade do Anel;Fantasia;2001;Peter Jackson;178
+Filme;O Senhor dos Anéis: As Duas Torres;Fantasia;2002;Peter Jackson;179
+Filme;O Senhor dos Anéis: O Retorno do Rei;Fantasia;2003;Peter Jackson;201
+Filme;Forrest Gump;Drama;1994;Robert Zemeckis;142
+Filme;Titanic;Romance;1997;James Cameron;195
+Filme;Gladiador;Ação;2000;Ridley Scott;155
+Filme;Coringa;Drama;2019;Todd Phillips;122
+Filme;Vingadores: Ultimato;Ação;2019;Anthony Russo e Joe Russo;181
+Filme;O Rei Leão;Animação;1994;Roger Allers e Rob Minkoff;88
+Filme;A Origem;Ficção Científica;2010;Christopher Nolan;148
+Filme;Pulp Fiction;Crime;1994;Quentin Tarantino;154
+Serie;Breaking Bad;Drama;2008;5;62
+Serie;Game of Thrones;Fantasia;2011;8;73
+Serie;Friends;Comédia;1994;10;236
+Serie;Sherlock;Mistério;2010;4;13
+Serie;Stranger Things;Ficção Científica;2016;4;34
+Serie;The Office;Comédia;2005;9;201
+Serie;The Crown;Drama Histórico;2016;5;50
+Serie;Black Mirror;Ficção Científica;2011;5;22
+Serie;The Mandalorian;Aventura;2019;3;24
+Serie;Lupin;Mistério;2021;2;10
+Serie;House of Cards;Drama;2013;6;73
+Serie;Vikings;História;2013;6;89
+Livro;1984;Ficção Científica;1949;George Orwell;Companhia das Letras
+Livro;O Senhor dos Anéis;Fantasia;1954;J.R.R. Tolkien;HarperCollins
+Livro;O Alquimista;Ficção;1988;Paulo Coelho;Rocco
+Livro;Harry Potter e a Pedra Filosofal;Fantasia;1997;J.K. Rowling;Rocco
+Livro;A Revolução dos Bichos;Fábula;1945;George Orwell;Companhia das Letras
+Livro;O Código Da Vinci;Mistério;2003;Dan Brown;Arqueiro
+Livro;Dom Quixote;Clássico;1605;Miguel de Cervantes;Penguin Books
+Livro;A Culpa é das Estrelas;Romance;2012;John Green;Intrínseca
+Livro;Percy Jackson e o Ladrão de Raios;Fantasia;2005;Rick Riordan;Intrínseca
+Livro;Jogos Vorazes;Distopia;2008;Suzanne Collins;Rocco
+Livro;O Pequeno Príncipe;Clássico;1943;Antoine de Saint-Exupéry;Agir
+Livro;Crime e Castigo;Clássico;1866;Fiódor Dostoiévski;Editora 34
+Livro;Orgulho e Preconceito;Romance;1813;Jane Austen;Martin Claret
+Livro;As Crônicas de Nárnia;Fantasia;1950;C.S. Lewis;HarperCollins
+Filme;Tropa de Elite;Ação;2007;José Padilha;115
+Avaliacao;andre.aa@ges.inatel.br;5;Muito bom!

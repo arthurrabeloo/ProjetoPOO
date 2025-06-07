@@ -29,11 +29,6 @@ public class Main {
         // Inicializar UI
         InterfaceUsuario ui = new InterfaceUsuario(scanner, recomendador);
 
-        // Exemplo inicial de conteúdos e avaliações (se o carregamento não trouxe nada)
-        if (recomendador.getConteudos().isEmpty()) {
-            inicializarDadosExemplo(recomendador);
-        }
-
         // Inicia interação com o usuário
         ui.iniciar();
 
@@ -46,23 +41,6 @@ public class Main {
         }
 
         scanner.close();
-    }
-
-    private static void inicializarDadosExemplo(Recomendador recomendador) {
-        Usuario usuario1 = new Usuario("João", "joao@email.com");
-        Usuario usuario2 = new Usuario("Maria", "maria@email.com");
-
-        Livro livro1 = new Livro("Dom Quixote", "Aventura", 1605, "Miguel de Cervantes", "Penguin Books");
-        Filme filme1 = new Filme("Inception", "Ficção", 2010, "Christopher Nolan", 148);
-        Serie serie1 = new Serie("Breaking Bad", "Drama", 2008, 5, 62);
-
-        recomendador.adicionarConteudo(livro1);
-        recomendador.adicionarConteudo(filme1);
-        recomendador.adicionarConteudo(serie1);
-
-        usuario1.avaliar(livro1, 5, "Obra-prima da literatura.");
-        usuario1.avaliar(filme1, 4, "Muito interessante e complexo.");
-        usuario2.avaliar(serie1, 5, "Melhor série que já vi!");
     }
 
     private static void salvarDados(Recomendador recomendador) throws IOException {
