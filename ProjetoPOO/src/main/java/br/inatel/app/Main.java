@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
 
-    private static final String ARQUIVO_DADOS = "dados/recomendador.txt";
+    private static final String ARQUIVO_DADOS = "dados/conteudos.txt";
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -44,13 +44,24 @@ public class Main {
     }
 
     private static void salvarDados(Recomendador recomendador) throws IOException {
-        // Monta uma lista de strings para salvar — formato simples: cada conteúdo em uma linha com campos separados por ";"
         List<String> linhas = recomendador.getConteudos().stream()
-                .map(Main::conteudoParaLinha)
-                .collect(Collectors.toList());
+                .flatMap(conteudo -> {
+                    // Linha do conteúdo
+                    String linhaConteudo = conteudoParaLinha(conteudo);
+                    // Linhas das avaliações associadas
+                    List<String> linhasAvaliacoes = conteudo.getAvaliacoes().stream()
+                            .map(avaliacao -> avaliacaoParaLinha(avaliacao, conteudo.getTitulo()))
+                            .toList();
+                    // Combinar as linhas
+                    return Stream.concat(
+                            List.of(linhaConteudo).stream(),
+                            linhasAvaliacoes.stream()
+                    );
+
+                })
+                .toList();
 
         Path path = Paths.get(ARQUIVO_DADOS);
-        Files.createDirectories(path.getParent()); // cria pasta se não existir
         Files.write(path, linhas, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
@@ -61,19 +72,23 @@ public class Main {
         }
 
         List<String> linhas = Files.readAllLines(path);
+        Conteudo conteudoAtual = null;
         for (String linha : linhas) {
-            Conteudo c = linhaParaConteudo(linha);
-            if (c != null) {
-                recomendador.adicionarConteudo(c);
+            if (linha.startsWith("Avaliacao;")) {
+                if (conteudoAtual != null) {
+                    Avaliacao avaliacao = linhaParaAvaliacao(linha);
+                    conteudoAtual.adicionarAvaliacao(avaliacao);
+                }
+            } else {
+                conteudoAtual = linhaParaConteudo(linha);
+                if (conteudoAtual != null) {
+                    recomendador.adicionarConteudo(conteudoAtual);
+                }
             }
         }
     }
 
-    // Converte um Conteúdo para uma linha String no arquivo
     private static String conteudoParaLinha(Conteudo c) {
-        // Exemplo formato simples:
-        // tipo;titulo;genero;ano;campoExtra1;campoExtra2
-        // Vamos armazenar o tipo para reconstituir depois
         if (c instanceof Filme f) {
             return String.format("Filme;%s;%s;%d;%s;%d",
                     f.getTitulo(),
@@ -99,7 +114,6 @@ public class Main {
         return "";
     }
 
-    // Converte uma linha do arquivo para um Conteudo
     private static Conteudo linhaParaConteudo(String linha) {
         String[] partes = linha.split(";");
         if (partes.length < 6) return null;
@@ -134,5 +148,26 @@ public class Main {
             System.err.println("Erro ao carregar linha: " + linha);
             return null;
         }
+    }
+
+    private static String avaliacaoParaLinha(Avaliacao avaliacao, String tituloConteudo) {
+        return String.format("Avaliacao;%s;%d;%s;%s",
+                tituloConteudo,
+                avaliacao.getNota(),
+                avaliacao.getUsuario().getEmail(),
+                avaliacao.getComentario());
+    }
+
+    private static Avaliacao linhaParaAvaliacao(String linha) {
+        String[] partes = linha.split(";");
+        if (partes.length != 5) {
+            throw new IllegalArgumentException("Formato de linha de avaliação inválido: " + linha);
+        }
+
+        String emailUsuario = partes[3];
+        int nota = Integer.parseInt(partes[2]);
+        String comentario = partes[4];
+        Usuario usuario = new Usuario("Desconhecido", emailUsuario);
+        return new Avaliacao(usuario, nota, comentario);
     }
 }

@@ -39,4 +39,4 @@ Livro;Crime e Castigo;Clássico;1866;Fiódor Dostoiévski;Editora 34
 Livro;Orgulho e Preconceito;Romance;1813;Jane Austen;Martin Claret
 Livro;As Crônicas de Nárnia;Fantasia;1950;C.S. Lewis;HarperCollins
 Filme;Tropa de Elite;Ação;2007;José Padilha;115
-Avaliacao;andre.aa@ges.inatel.br;5;Muito bom!
+Avaliacao;Tropa de Elite;5;andre@gmail.com;Bom

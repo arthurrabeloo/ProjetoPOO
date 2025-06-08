@@ -130,38 +130,48 @@ public class InterfaceUsuario {
     }
 
     private void avaliarConteudo() {
-        System.out.print("\nInforme o título do conteúdo: ");
-        String titulo = scanner.nextLine();
-
-        Conteudo conteudo = recomendador.getConteudos().stream()
-                .filter(c -> c.getTitulo().equalsIgnoreCase(titulo))
-                .findFirst()
-                .orElseThrow(() -> new ConteudoNaoEncontradoException("Conteúdo não encontrado."));
-
-        System.out.print("Nome do usuário: ");
-        String nome = scanner.nextLine();
-        System.out.print("Email do usuário: ");
-        String email = scanner.nextLine();
-        Usuario usuario = new Usuario(nome, email);
-
-        System.out.print("Nota (1 a 5): ");
-        int nota = scanner.nextInt();
-        scanner.nextLine(); // Consumir quebra de linha
-        System.out.print("Comentário: ");
-        String comentario = scanner.nextLine();
-
         try {
+            System.out.print("\nInforme o título do conteúdo: ");
+            String titulo = scanner.nextLine();
+
+            Conteudo conteudo = recomendador.getConteudos().stream()
+                    .filter(c -> c.getTitulo().equalsIgnoreCase(titulo))
+                    .findFirst()
+                    .orElseThrow(() -> new ConteudoNaoEncontradoException("Conteúdo não encontrado."));
+
+            System.out.print("Nome do usuário: ");
+            String nome = scanner.nextLine();
+            System.out.print("Email do usuário: ");
+            String email = scanner.nextLine();
+            Usuario usuario = new Usuario(nome, email);
+
+            System.out.print("Nota (1 a 5): ");
+            int nota = scanner.nextInt();
+            if (nota < 1 || nota > 5) {
+                throw new NotaInvalidaException("Nota deve estar entre 1 e 5.");
+            }
+            scanner.nextLine(); // Consumir quebra de linha após o número
+
+            System.out.print("Comentário: ");
+            String comentario = scanner.nextLine();
+
+            // Adicionar avaliação
             usuario.avaliar(conteudo, nota, comentario);
             System.out.println("Avaliação registrada com sucesso!");
 
             // Salvar alterações no arquivo
             recomendador.salvarConteudosComoTexto("dados/conteudos.txt");
+        } catch (ConteudoNaoEncontradoException e) {
+            System.err.println(e.getMessage());
         } catch (NotaInvalidaException e) {
             System.err.println(e.getMessage());
         } catch (IOException e) {
             System.err.println("Erro ao salvar os dados: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Erro inesperado: " + e.getMessage());
         }
     }
+
 
     private void pesquisarConteudo() {
         System.out.print("\nInforme o título ou parte do título do conteúdo: ");
