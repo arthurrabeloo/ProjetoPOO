@@ -164,10 +164,12 @@ public class Main {
             throw new IllegalArgumentException("Formato de linha de avaliação inválido: " + linha);
         }
 
+        String nomeUsuario = partes[1];
         String emailUsuario = partes[3];
         int nota = Integer.parseInt(partes[2]);
         String comentario = partes[4];
-        Usuario usuario = new Usuario("Desconhecido", emailUsuario);
+        Usuario usuario = new Usuario(nomeUsuario, emailUsuario);
         return new Avaliacao(usuario, nota, comentario);
     }
+
 }
