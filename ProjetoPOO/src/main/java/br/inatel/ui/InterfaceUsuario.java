@@ -31,7 +31,7 @@ public class InterfaceUsuario {
             System.out.print("Escolha uma opção: ");
 
             int opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir a quebra de linha
+            scanner.nextLine();
 
             try {
                 switch (opcao) {
@@ -47,7 +47,7 @@ public class InterfaceUsuario {
                     }
                     default -> System.out.println("Opção inválida.");
                 }
-            } catch (Exception e) { /*tenta capturar qualquer exceção vinda do bloco do switch*/
+            } catch (Exception e) {
                 System.err.println("Erro: " + e.getMessage());
             }
         }
@@ -58,7 +58,7 @@ public class InterfaceUsuario {
         System.out.print("Título: ");
         String titulo = scanner.nextLine();
 
-        //verificação se o conteudo ja existe, se existir imprime que ja esta add
+        //Verificação se o conteudo ja existe
         if (gerenciador.contemConteudo(titulo)) {
             System.out.println("O conteúdo com esse título já está adicionado.");
             return;
@@ -68,19 +68,19 @@ public class InterfaceUsuario {
         String genero = scanner.nextLine();
         System.out.print("Ano de lançamento: ");
         int ano = scanner.nextInt();
-        scanner.nextLine(); // Consumir quebra de linha
+        scanner.nextLine();
         System.out.print("Tipo (1 = Filme, 2 = Série, 3 = Livro): ");
         int tipo = scanner.nextInt();
-        scanner.nextLine(); // Consumir quebra de linha
+        scanner.nextLine();
 
-        //com base no conteudo, pede mais detalhes conforme o tipo
+        //Pede mais detalhes conforme o tipo
         Conteudo conteudo = switch (tipo) {
             case 1 -> {
                 System.out.print("Diretor: ");
                 String diretor = scanner.nextLine();
                 System.out.print("Duração (minutos): ");
                 int duracao = scanner.nextInt();
-                yield new Filme(titulo, genero, ano, diretor, duracao); //yield new retorna um valor a variavel que esta esperando o estado do switch
+                yield new Filme(titulo, genero, ano, diretor, duracao);
             }
             case 2 -> {
                 System.out.print("Número de temporadas: ");
@@ -99,6 +99,7 @@ public class InterfaceUsuario {
             default -> throw new IllegalArgumentException("Tipo inválido.");
         };
 
+        //Adiciona conteudo na lista de conteudos do gerenciador
         gerenciador.adicionarConteudo(conteudo);
         System.out.println("Conteúdo adicionado com sucesso!");
     }
@@ -118,7 +119,6 @@ public class InterfaceUsuario {
             System.err.println("Erro ao deletar o conteúdo: " + e.getMessage());
         }
     }
-
 
     private void listarPorGenero() {
         System.out.print("\nInforme o gênero: ");
@@ -152,7 +152,7 @@ public class InterfaceUsuario {
             System.out.print("\nInforme o título do conteúdo: ");
             String titulo = scanner.nextLine();
 
-            //pesquisando titulo
+            //Pesquisando titulo na lista conteudos do gerenciador
             Conteudo conteudo = gerenciador.getConteudos().stream()
                     .filter(c -> c.getTitulo().equalsIgnoreCase(titulo))
                     .findFirst()
@@ -162,31 +162,27 @@ public class InterfaceUsuario {
             String nome = scanner.nextLine();
             System.out.print("Email do usuário: ");
             String email = scanner.nextLine();
-            Usuario usuario = new Usuario(nome, email); //novo objeto usuario com as informaçoes digitadas
+            Usuario usuario = new Usuario(nome, email); //Nova instancia de usuario com as informações
 
             System.out.print("Nota (1 a 5): ");
             int nota = scanner.nextInt();
             if (nota < 1 || nota > 5) {
                 throw new NotaInvalidaException("Nota deve estar entre 1 e 5.");
             }
-            scanner.nextLine(); // Consumir quebra de linha após o número
+            scanner.nextLine();
 
             System.out.print("Comentário: ");
             String comentario = scanner.nextLine();
 
-            // Adicionar avaliação
-            usuario.avaliar(conteudo, nota, comentario); //passa o conteudo, a nota e o comentario
+            //Adicionar avaliação no perfil do usuario
+            usuario.avaliar(conteudo, nota, comentario);
             System.out.println("Avaliação registrada com sucesso!");
 
-            // Salvar alterações no arquivo
-            gerenciador.salvarConteudosComoTexto("dados/conteudos.txt");
         }
         catch (ConteudoNaoEncontradoException e) {
             System.err.println(e.getMessage());
         } catch (NotaInvalidaException e) {
             System.err.println(e.getMessage());
-        } catch (IOException e) {
-            System.err.println("Erro ao salvar os dados: " + e.getMessage());
         } catch (Exception e) {
             System.err.println("Erro inesperado: " + e.getMessage());
         }
@@ -197,6 +193,7 @@ public class InterfaceUsuario {
         System.out.print("\nInforme o título ou parte do título do conteúdo: ");
         String titulo = scanner.nextLine();
 
+        //Cria lista com todos os possíveis conteúdos
         List<Conteudo> resultados = gerenciador.pesquisarPorTitulo(titulo);
 
         if (resultados.isEmpty()) {
@@ -210,8 +207,9 @@ public class InterfaceUsuario {
 
             System.out.print("\nEscolha o número de um conteúdo para ver mais detalhes (0 para voltar): ");
             int escolha = scanner.nextInt();
-            scanner.nextLine(); // Consumir quebra de linha
+            scanner.nextLine();
 
+            //Mostrar mais detalhes sobre o conteúdo
             if (escolha > 0 && escolha <= resultados.size()) {
                 Conteudo escolhido = resultados.get(escolha - 1);
                 mostrarDetalhesConteudo(escolhido);
@@ -244,7 +242,7 @@ public class InterfaceUsuario {
         System.out.print("Escolha uma opção: ");
 
         int escolha = scanner.nextInt();
-        scanner.nextLine(); // Consumir quebra de linha
+        scanner.nextLine();
 
         if (escolha == 1) {
             List<Avaliacao> avaliacoes = conteudo.getAvaliacoes();

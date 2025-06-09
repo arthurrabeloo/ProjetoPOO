@@ -24,7 +24,7 @@ public class Gerenciador {
                 .filter(c -> c.getGenero().equalsIgnoreCase(genero))
                 .sorted(Comparator.comparingDouble(Conteudo::getNotaMedia).reversed())
                 .collect(Collectors.toList());
-    }
+    } //stream, filtra por gênero e usa o case INsensitive, ordena os dados de forma decrescente e transforma o resultado em lista
 
     public List<Conteudo> recomendarTop(int topN) {
         return conteudos.stream()
@@ -38,7 +38,7 @@ public class Gerenciador {
     }
 
     public void salvarConteudosComoTexto(String caminho) throws IOException {
-        List<String> linhas = new ArrayList<>(); //cada string da lista representará uma linha a ser escrita
+        List<String> linhas = new ArrayList<>(); //Cada string da lista representará uma linha a ser escrita no arquivo
 
         for (Conteudo conteudo : conteudos) {
             // Identificar o tipo de conteúdo
@@ -67,12 +67,12 @@ public class Gerenciador {
                         ((Livro) conteudo).getEditora());
                 default -> throw new IllegalArgumentException("Tipo desconhecido: " + tipo);
             };
-            linhas.add(linhaConteudo);
+            linhas.add(linhaConteudo); //adiciona linhas formatadas na lista
 
-            // Adicionando as avaliações associadas ao conteúdo
+            //Adicionando as avaliações associadas ao conteúdo
             for (Avaliacao avaliacao : conteudo.getAvaliacoes()) {
                 String linhaAvaliacao = String.format("Avaliacao;%s;%d;%s;%s",
-                        avaliacao.getUsuario().getNome(), //usuario tem nome, email e suas avaliacoes
+                        avaliacao.getUsuario().getNome(),
                         avaliacao.getNota(),
                         avaliacao.getUsuario().getEmail(),
                         avaliacao.getComentario());
@@ -80,48 +80,48 @@ public class Gerenciador {
             }
         }
 
-        // Caminho do arquivo e gravação
+        //Caminho do arquivo e gravação
         Path path = Paths.get(caminho);
         try {
             Files.createDirectories(path.getParent()); // Garante que o diretório existe
-            Files.write(path, linhas); // Grava os dados no arquivo
+            Files.write(path, linhas); //Grava os dados no arquivo
         } catch (IOException e) {
             System.err.println("Erro ao salvar os dados: " + e.getMessage());
         }
     }
 
     public void carregarConteudosDeTexto(String caminhoArquivo) throws IOException {
-        Path path = Paths.get(caminhoArquivo);
+        Path path = Paths.get(caminhoArquivo); //recebendo caminho do arquivo
         if (!Files.exists(path)) {
             throw new IOException("Arquivo de dados não encontrado.");
         }
 
-        List<String> linhas = Files.readAllLines(path);
+        List<String> linhas = Files.readAllLines(path); //Faz a leitura para a lista completa
         Conteudo conteudoAtual = null;
         for (String linha : linhas) {
             if (linha.startsWith("Avaliacao;")) {
                 if (conteudoAtual != null) {
-                    Avaliacao avaliacao = linhaParaAvaliacao(linha);
-                    conteudoAtual.adicionarAvaliacao(avaliacao);
+                    Avaliacao avaliacao = linhaParaAvaliacao(linha); //Cria uma avaliação
+                    conteudoAtual.adicionarAvaliacao(avaliacao); //Adiciona avaliação na lista
                 }
             } else {
-                conteudoAtual = linhaParaConteudo(linha);
+                conteudoAtual = linhaParaConteudo(linha); //Cria um conteúdo
                 if (conteudoAtual != null) {
-                    adicionarConteudo(conteudoAtual);
+                    adicionarConteudo(conteudoAtual); //Adiciona na lista de conteudo
                 }
             }
         }
     }
 
     private Avaliacao linhaParaAvaliacao(String linha) {
-        String[] partes = linha.split(";");
+        String[] partes = linha.split(";"); //Divide a linha em partes ao encontrar um ";"
         if (partes.length != 5) {
             throw new IllegalArgumentException("Formato de linha de avaliação inválido: " + linha);
         }
 
         String nomeUsuario = partes[1];
         String emailUsuario = partes[3];
-        int nota = Integer.parseInt(partes[2]);
+        int nota = Integer.parseInt(partes[2]); //Cast de string para int
         String comentario = partes[4];
         Usuario usuario = new Usuario(nomeUsuario, emailUsuario);
         return new Avaliacao(usuario, nota, comentario);
@@ -165,13 +165,13 @@ public class Gerenciador {
 
     public boolean removerConteudo(String titulo) {
         return conteudos.removeIf(c -> c.getTitulo().equalsIgnoreCase(titulo));
-    }
+    } //usa a API collections do java para tentar remover, retorna true se conseguir
 
     public List<Conteudo> pesquisarPorTitulo(String titulo) {
         return conteudos.stream()
                 .filter(c -> c.getTitulo().toLowerCase().contains(titulo.toLowerCase()))
                 .collect(Collectors.toList());
-    }
+    } //Faz a pesquisa de um conteúdo completo ou parcial, e devolve o resultado como uma lista
 
 
     public List<Conteudo> getConteudos() {

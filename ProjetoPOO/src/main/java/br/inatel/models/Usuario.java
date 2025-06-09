@@ -23,6 +23,5 @@ public class Usuario {
     // Getters
     public String getNome() { return nome; }
     public String getEmail() { return email; }
-    public List<Avaliacao> getAvaliacoes() { return avaliacoes; }
 }
 

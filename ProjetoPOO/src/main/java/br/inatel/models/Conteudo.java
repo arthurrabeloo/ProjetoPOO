@@ -13,11 +13,11 @@ public abstract class Conteudo {
         this.titulo = titulo;
         this.genero = genero;
         this.anoLancamento = anoLancamento;
-        this.avaliacoes = new ArrayList<>(); //boa prática, evita nullpointerexception e inicializa a lista quando um obj é criado
+        this.avaliacoes = new ArrayList<>();
     }
 
     public void adicionarAvaliacao(Avaliacao avaliacao) {
-        avaliacoes.add(avaliacao); //adiciona avaliacao na lista
+        avaliacoes.add(avaliacao); //Adiciona avaliacao na lista
     }
 
     public double getNotaMedia() {
