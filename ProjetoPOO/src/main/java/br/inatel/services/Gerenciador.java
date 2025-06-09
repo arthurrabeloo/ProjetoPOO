@@ -7,20 +7,11 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Recomendador {
+public class Gerenciador {
     private List<Conteudo> conteudos;
 
-    public Recomendador() {
+    public Gerenciador() {
         this.conteudos = new ArrayList<>();
-    }
-
-    public boolean contemConteudo(String titulo) {
-        return conteudos.stream()
-                .anyMatch(c -> c.getTitulo().equalsIgnoreCase(titulo));
-    }
-
-    public void adicionarConteudo(Conteudo conteudo) {
-        conteudos.add(conteudo);
     }
 
     public List<Conteudo> recomendarPorGenero(String genero) {
@@ -37,8 +28,8 @@ public class Recomendador {
                 .collect(Collectors.toList());
     }
 
-    public List<Conteudo> getConteudos() {
-        return conteudos;
+    public void adicionarConteudo(Conteudo conteudo) {
+        conteudos.add(conteudo);
     }
 
     public void salvarConteudosComoTexto(String caminho) throws IOException {
@@ -74,9 +65,10 @@ public class Recomendador {
 
             // Adicionando as avaliações associadas ao conteúdo
             for (Avaliacao avaliacao : conteudo.getAvaliacoes()) {
-                String linhaAvaliacao = String.format("Avaliacao;%s;%d;%s",
-                        avaliacao.getUsuario(), //usuario tem nome, email e suas avaliacoes
+                String linhaAvaliacao = String.format("Avaliacao;%s;%d;%s;%s",
+                        avaliacao.getUsuario().getNome(), //usuario tem nome, email e suas avaliacoes
                         avaliacao.getNota(),
+                        avaliacao.getUsuario().getEmail(),
                         avaliacao.getComentario());
                 linhas.add(linhaAvaliacao);
             }
@@ -93,6 +85,79 @@ public class Recomendador {
         }
     }
 
+    public void carregarConteudosDeTexto(String caminhoArquivo) throws IOException {
+        Path path = Paths.get(caminhoArquivo);
+        if (!Files.exists(path)) {
+            throw new IOException("Arquivo de dados não encontrado.");
+        }
+
+        List<String> linhas = Files.readAllLines(path);
+        Conteudo conteudoAtual = null;
+        for (String linha : linhas) {
+            if (linha.startsWith("Avaliacao;")) {
+                if (conteudoAtual != null) {
+                    Avaliacao avaliacao = linhaParaAvaliacao(linha);
+                    conteudoAtual.adicionarAvaliacao(avaliacao);
+                }
+            } else {
+                conteudoAtual = linhaParaConteudo(linha);
+                if (conteudoAtual != null) {
+                    adicionarConteudo(conteudoAtual);
+                }
+            }
+        }
+    }
+
+    private Avaliacao linhaParaAvaliacao(String linha) {
+        String[] partes = linha.split(";");
+        if (partes.length != 5) {
+            throw new IllegalArgumentException("Formato de linha de avaliação inválido: " + linha);
+        }
+
+        String nomeUsuario = partes[1];
+        String emailUsuario = partes[3];
+        int nota = Integer.parseInt(partes[2]);
+        String comentario = partes[4];
+        Usuario usuario = new Usuario(nomeUsuario, emailUsuario);
+        return new Avaliacao(usuario, nota, comentario);
+    }
+
+    private Conteudo linhaParaConteudo(String linha) {
+        String[] partes = linha.split(";");
+        if (partes.length < 6) return null;
+
+        String tipo = partes[0];
+        String titulo = partes[1];
+        String genero = partes[2];
+        int ano = Integer.parseInt(partes[3]);
+
+        try {
+            switch (tipo) {
+                case "Filme" -> {
+                    String diretor = partes[4];
+                    int duracao = Integer.parseInt(partes[5]);
+                    return new Filme(titulo, genero, ano, diretor, duracao);
+                }
+                case "Serie" -> {
+                    int temporadas = Integer.parseInt(partes[4]);
+                    int episodios = Integer.parseInt(partes[5]);
+                    return new Serie(titulo, genero, ano, temporadas, episodios);
+                }
+                case "Livro" -> {
+                    String autor = partes[4];
+                    String editora = partes[5];
+                    return new Livro(titulo, genero, ano, autor, editora);
+                }
+                default -> {
+                    return null;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao carregar linha: " + linha);
+            return null;
+        }
+    }
+
     public boolean removerConteudo(String titulo) {
         return conteudos.removeIf(c -> c.getTitulo().equalsIgnoreCase(titulo));
     }
@@ -103,6 +168,13 @@ public class Recomendador {
                 .collect(Collectors.toList());
     }
 
+    public boolean contemConteudo(String titulo) {
+        return conteudos.stream()
+                .anyMatch(c -> c.getTitulo().equalsIgnoreCase(titulo));
+    }
 
+    public List<Conteudo> getConteudos() {
+        return conteudos;
+    }
 
 }

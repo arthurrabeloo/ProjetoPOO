@@ -1,7 +1,7 @@
 package br.inatel.ui;
 
 import br.inatel.models.*;
-import br.inatel.services.Recomendador;
+import br.inatel.services.Gerenciador;
 import br.inatel.exceptions.ConteudoNaoEncontradoException;
 import br.inatel.exceptions.NotaInvalidaException;
 
@@ -11,9 +11,9 @@ import java.util.Scanner;
 
 public class InterfaceUsuario {
     private Scanner scanner;
-    private Recomendador recomendador;
+    private Gerenciador recomendador;
 
-    public InterfaceUsuario(Scanner scanner, Recomendador recomendador) {
+    public InterfaceUsuario(Scanner scanner, Gerenciador recomendador) {
         this.scanner = scanner;
         this.recomendador = recomendador;
     }
@@ -259,37 +259,6 @@ public class InterfaceUsuario {
             }
         } else {
             System.out.println("Voltando à pesquisa...");
-        }
-    }
-
-
-
-    private void verAvaliacoes() {
-        System.out.print("\nInforme o título do conteúdo: ");
-        String titulo = scanner.nextLine();
-
-        Conteudo conteudo = recomendador.getConteudos().stream()
-                .filter(c -> c.getTitulo().equalsIgnoreCase(titulo))
-                .findFirst()
-                .orElse(null);
-
-        if (conteudo == null) {
-            System.out.println("Erro: Conteúdo não encontrado.");
-            return;
-        }
-
-        List<Avaliacao> avaliacoes = conteudo.getAvaliacoes();
-
-        if (avaliacoes.isEmpty()) {
-            System.out.println("Esse conteúdo ainda não possui avaliações.");
-        } else {
-            System.out.println("\n--- Avaliações de " + conteudo.getTitulo() + " ---");
-            for (Avaliacao avaliacao : avaliacoes) {
-                System.out.println("Usuário: " + avaliacao.getUsuario().getNome());
-                System.out.println("Nota: " + avaliacao.getNota());
-                System.out.println("Comentário: " + avaliacao.getComentario());
-                System.out.println("---------------------------");
-            }
         }
     }
 
