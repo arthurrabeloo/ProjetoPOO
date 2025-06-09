@@ -25,6 +25,7 @@ public abstract class Conteudo {
         return avaliacoes.stream().mapToDouble(Avaliacao::getNota).average().orElse(0.0);
     }
 
+    //metodo abstrato
     public abstract String getTipo();
 
     // Getters

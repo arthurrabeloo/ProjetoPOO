@@ -11,11 +11,11 @@ import java.util.Scanner;
 
 public class InterfaceUsuario {
     private Scanner scanner;
-    private Gerenciador recomendador;
+    private Gerenciador gerenciador;
 
-    public InterfaceUsuario(Scanner scanner, Gerenciador recomendador) {
+    public InterfaceUsuario(Scanner scanner, Gerenciador gerenciador) {
         this.scanner = scanner;
-        this.recomendador = recomendador;
+        this.gerenciador = gerenciador;
     }
 
     public void iniciar() {
@@ -47,7 +47,7 @@ public class InterfaceUsuario {
                     }
                     default -> System.out.println("Opção inválida.");
                 }
-            } catch (Exception e) {
+            } catch (Exception e) { /*tenta capturar qualquer exceção vinda do bloco do switch*/
                 System.err.println("Erro: " + e.getMessage());
             }
         }
@@ -58,7 +58,8 @@ public class InterfaceUsuario {
         System.out.print("Título: ");
         String titulo = scanner.nextLine();
 
-        if (recomendador.contemConteudo(titulo)) {
+        //verificação se o conteudo ja existe, se existir imprime que ja esta add
+        if (gerenciador.contemConteudo(titulo)) {
             System.out.println("O conteúdo com esse título já está adicionado.");
             return;
         }
@@ -72,13 +73,14 @@ public class InterfaceUsuario {
         int tipo = scanner.nextInt();
         scanner.nextLine(); // Consumir quebra de linha
 
+        //com base no conteudo, pede mais detalhes conforme o tipo
         Conteudo conteudo = switch (tipo) {
             case 1 -> {
                 System.out.print("Diretor: ");
                 String diretor = scanner.nextLine();
                 System.out.print("Duração (minutos): ");
                 int duracao = scanner.nextInt();
-                yield new Filme(titulo, genero, ano, diretor, duracao);
+                yield new Filme(titulo, genero, ano, diretor, duracao); //yield new retorna um valor a variavel que esta esperando o estado do switch
             }
             case 2 -> {
                 System.out.print("Número de temporadas: ");
@@ -97,7 +99,7 @@ public class InterfaceUsuario {
             default -> throw new IllegalArgumentException("Tipo inválido.");
         };
 
-        recomendador.adicionarConteudo(conteudo);
+        gerenciador.adicionarConteudo(conteudo);
         System.out.println("Conteúdo adicionado com sucesso!");
     }
 
@@ -106,7 +108,7 @@ public class InterfaceUsuario {
         String titulo = scanner.nextLine();
 
         try {
-            boolean removido = recomendador.removerConteudo(titulo);
+            boolean removido = gerenciador.removerConteudo(titulo);
             if (removido) {
                 System.out.println("Conteúdo '" + titulo + "' deletado com sucesso.");
             } else {
@@ -122,7 +124,7 @@ public class InterfaceUsuario {
         System.out.print("\nInforme o gênero: ");
         String genero = scanner.nextLine();
 
-        List<Conteudo> recomendados = recomendador.recomendarPorGenero(genero);
+        List<Conteudo> recomendados = gerenciador.recomendarPorGenero(genero);
         if (recomendados.isEmpty()) {
             System.out.println("Nenhum conteúdo encontrado para o gênero informado.");
         } else {
@@ -134,7 +136,7 @@ public class InterfaceUsuario {
     }
 
     private void recomendarTop5() {
-        List<Conteudo> top5 = recomendador.recomendarTop(5);
+        List<Conteudo> top5 = gerenciador.recomendarTop(5);
         if (top5.isEmpty()) {
             System.out.println("Nenhum conteúdo disponível para recomendação.");
         } else {
@@ -151,7 +153,7 @@ public class InterfaceUsuario {
             String titulo = scanner.nextLine();
 
             //pesquisando titulo
-            Conteudo conteudo = recomendador.getConteudos().stream()
+            Conteudo conteudo = gerenciador.getConteudos().stream()
                     .filter(c -> c.getTitulo().equalsIgnoreCase(titulo))
                     .findFirst()
                     .orElseThrow(() -> new ConteudoNaoEncontradoException("Conteúdo não encontrado."));
@@ -177,7 +179,7 @@ public class InterfaceUsuario {
             System.out.println("Avaliação registrada com sucesso!");
 
             // Salvar alterações no arquivo
-            recomendador.salvarConteudosComoTexto("dados/conteudos.txt");
+            gerenciador.salvarConteudosComoTexto("dados/conteudos.txt");
         }
         catch (ConteudoNaoEncontradoException e) {
             System.err.println(e.getMessage());
@@ -195,7 +197,7 @@ public class InterfaceUsuario {
         System.out.print("\nInforme o título ou parte do título do conteúdo: ");
         String titulo = scanner.nextLine();
 
-        List<Conteudo> resultados = recomendador.pesquisarPorTitulo(titulo);
+        List<Conteudo> resultados = gerenciador.pesquisarPorTitulo(titulo);
 
         if (resultados.isEmpty()) {
             System.out.println("Nenhum conteúdo encontrado com o título fornecido.");

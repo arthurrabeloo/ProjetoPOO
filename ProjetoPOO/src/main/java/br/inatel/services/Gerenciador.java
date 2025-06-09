@@ -14,6 +14,11 @@ public class Gerenciador {
         this.conteudos = new ArrayList<>();
     }
 
+    public boolean contemConteudo(String titulo) {
+        return conteudos.stream()
+                .anyMatch(c -> c.getTitulo().equalsIgnoreCase(titulo));
+    }
+
     public List<Conteudo> recomendarPorGenero(String genero) {
         return conteudos.stream()
                 .filter(c -> c.getGenero().equalsIgnoreCase(genero))
@@ -33,7 +38,7 @@ public class Gerenciador {
     }
 
     public void salvarConteudosComoTexto(String caminho) throws IOException {
-        List<String> linhas = new ArrayList<>(); //cada string da lista representa uma linha a ser escrita
+        List<String> linhas = new ArrayList<>(); //cada string da lista representará uma linha a ser escrita
 
         for (Conteudo conteudo : conteudos) {
             // Identificar o tipo de conteúdo
@@ -41,6 +46,7 @@ public class Gerenciador {
 
             // Formatando a linha do conteúdo com base no tipo
             String linhaConteudo = switch (tipo) {
+                //string format formata as strings conforme o modelo especificado, placeholders: %d para int, %s para string
                 case "Filme" -> String.format("Filme;%s;%s;%d;%s;%d",
                         conteudo.getTitulo(),
                         conteudo.getGenero(),
@@ -81,7 +87,6 @@ public class Gerenciador {
             Files.write(path, linhas); // Grava os dados no arquivo
         } catch (IOException e) {
             System.err.println("Erro ao salvar os dados: " + e.getMessage());
-            throw e; // Lança novamente a exceção para que possa ser tratada em nível superior
         }
     }
 
@@ -168,10 +173,6 @@ public class Gerenciador {
                 .collect(Collectors.toList());
     }
 
-    public boolean contemConteudo(String titulo) {
-        return conteudos.stream()
-                .anyMatch(c -> c.getTitulo().equalsIgnoreCase(titulo));
-    }
 
     public List<Conteudo> getConteudos() {
         return conteudos;
